@@ -1,11 +1,11 @@
 import asyncio
-import os
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message, Update
-from aiohttp import web
+from aiogram.types import Message
 
-TOKEN = os.getenv("BOT_TOKEN")
+
+TOKEN = "8461181717:AAH3zf9IBJS04kiXDPi6ocO1f9A5f8AbK7k"
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -19,16 +19,9 @@ async def cmd_start(message: Message):
 async def any_text(message: Message):
     await message.answer(MY_TEXT)
 
+async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
 
-async def handle_webhook(request):
-    url = str(request.url)
-    if request.method == "POST":
-        json_data = await request.json()
-        update = Update.model_validate(json_data, context={"bot": bot})
-        await dp.feed_update(bot, update)
-        return web.Response(text="ok")
-    return web.Response(text="Method Not Allowed", status=405)
-
-app = web.Application()
-app.router.add_post("/api/webhook", handle_webhook)
-
+if __name__ == "__main__":
+    asyncio.run(main())
